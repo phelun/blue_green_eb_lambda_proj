@@ -41,6 +41,7 @@ node('misc') {
 // CUSTOM DSL METHODS 
 def deploy_aws() {
     stage('AWS Creds'){
+      echo "${seperator60}\n${seperator20} Spinning up EBS env  \n${seperator60}"
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID' )]){
         sh """
            terraform init
@@ -64,11 +65,11 @@ def deploy_aws() {
     }
 
     stage ('Destroy instance'){
-      echo "${seperator60}\n${seperator20} Destroyinh instances(s) \n${seperator60}"
+      echo "${seperator60}\n${seperator20} Destroying EBS env  \n${seperator60}"
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]){
-      sh """
-        terraform destroy -force
-      """
+        sh """
+           terraform destroy -force
+        """
       }
     }
 }
