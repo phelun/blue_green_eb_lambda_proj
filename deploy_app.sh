@@ -15,7 +15,7 @@ eb_env_name='fmbah-dev-env'
 eb_region='eu-west-1'
 
 # Copy bundled zip file to s3
-aws s3 cp ${target_app} s3://${target_bucket}
+aws s3 cp ${target_app} s3://${target_bucket} --region ${eb_region}
 
 
 # Create new app version 
