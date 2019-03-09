@@ -20,9 +20,8 @@ node('misc') {
           sh "ls -lart ."
       }
     
-
       deploy_aws() 
-
+      deploy_app()
 
       echo "${seperator60}\n${seperator20} Makefile Introduced \n${seperator60}"
       stage('Intro to Makefile'){
@@ -48,7 +47,13 @@ def deploy_aws() {
         """
       }
     }
- 
+}
+
+def deploy_app(){
+    stage('AppVersion Update'){
+        sh "./deploy_app.sh"
+    }
+    
     stage ('Check EB'){
         try {
           timeout(time: 900, unit: 'MINUTES') {
