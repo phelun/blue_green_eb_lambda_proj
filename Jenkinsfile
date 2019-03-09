@@ -36,7 +36,8 @@ node('misc') {
           checkout scm 
           check_tools_ver() 
           check_branch() 
-          sh "ls -lrt ."
+          sh "pwd"
+          sh "ls -lart ."
       }
     
 
