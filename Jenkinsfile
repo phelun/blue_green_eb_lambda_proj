@@ -32,10 +32,11 @@ node('misc') {
       echo "${seperator60}\n${seperator20} Inbuilt tools \n${seperator60}"
       ansiColor('xterm') {
           // Just some echoes to show the ANSI color.
-          stage "\u001B[31mI'm Red\u001B[0m Now not"
+          stage "CheckOut"
           checkout scm 
           check_tools_ver() 
           check_branch() 
+          sh "ls -lrt ."
       }
     
 
