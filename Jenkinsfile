@@ -21,7 +21,6 @@ node('misc') {
       }
     
 
-      echo "${seperator60}\n${seperator20} AWS ENV \n${seperator60}"
       deploy_aws() 
 
 
@@ -40,7 +39,6 @@ node('misc') {
 
 // CUSTOM DSL METHODS 
 def deploy_aws() {
-    echo "${seperator60}\n${seperator20} Spinning up EBS env  \n${seperator60}"
     stage('AWS Creds'){
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID' )]){
         sh """
@@ -64,7 +62,6 @@ def deploy_aws() {
         }
     }
 
-    echo "${seperator60}\n${seperator20} Destroying EBS env  \n${seperator60}"
     stage ('Destroy instance'){
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]){
         sh """
