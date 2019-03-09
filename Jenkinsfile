@@ -1,23 +1,4 @@
 #!/usr/bin/env groovy
-/**
- Top 10 Jenkins concepts in one script
-  1. AWS credentials setup
-  2. Parameterized pipeline
-  3. Dropdown selection based on requirements
-  4. Custom Library Configurations
-  5. Slack/email notifications
-  6. Integrate with artefactory/s3 bucket
-  7. USing github source branch plugin to scan your repo/project on github/bitbucket
-  8. - if/else statements
-     - switch/case statement
-     - try/catch/finally aka exception handlin
-     - def
-     - return
-     - internel variables
-     - properties
-  9. Taking concept from this guy https://gist.github.com/jonico/e205b16cf07451b2f475543cf1541e70
-  10. cicd
-*/
 
 // Import some library 
 import groovy.json.JsonOutput
@@ -34,8 +15,6 @@ node('misc') {
           // Just some echoes to show the ANSI color.
           stage "CheckOut"
           checkout scm 
-          check_tools_ver() 
-          check_branch() 
           sh "hostname -f"
           sh "pwd"
           sh "ls -lart ."
@@ -43,7 +22,7 @@ node('misc') {
     
 
       echo "${seperator60}\n${seperator20} AWS ENV \n${seperator60}"
-      check_aws_connection() 
+      deploy_aws() 
 
 
       echo "${seperator60}\n${seperator20} Makefile Introduced \n${seperator60}"
@@ -60,12 +39,38 @@ node('misc') {
 }
 
 // CUSTOM DSL METHODS 
-def check_aws_connection() {
+def deploy_aws() {
     stage('AWS Creds'){
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID' )]){
         sh """
-           aws ec2 describe-instances --region eu-west-1
+           cd ./home/jenkins/workspace/bg-elasticbeanstalk-demo           
+           terraform init
+           terraform plan -out=create.tfplan
+           terraform apply create.tfplan
         """
+      }
+    }
+ 
+    stage ('Check EB'){
+        try {
+          timeout(time: 900, unit: 'MINUTES') {
+            input message: 'Proceed to next stage?'
+          }
+        }
+        catch (err) {
+            echo "Aborted by user!"
+            currentBuild.result = 'ABORTED'
+            error('Job Aborted')
+        }
+    }
+
+    stage ('Destroy instance'){
+      echo "${seperator60}\n${seperator20} Destroyinh instances(s) \n${seperator60}"
+      withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]){
+      sh """
+        cd ./home/jenkins/workspace/bg-elasticbeanstalk-demo
+        terraform destroy -force
+      """
       }
     }
 }
