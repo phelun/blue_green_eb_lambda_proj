@@ -43,7 +43,6 @@ def deploy_aws() {
     stage('AWS Creds'){
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID' )]){
         sh """
-           cd ./home/jenkins/workspace/bg-elasticbeanstalk-demo           
            terraform init
            terraform plan -out=create.tfplan
            terraform apply create.tfplan
@@ -68,7 +67,6 @@ def deploy_aws() {
       echo "${seperator60}\n${seperator20} Destroyinh instances(s) \n${seperator60}"
       withCredentials([usernamePassword(credentialsId: 'cicd-skeleton', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]){
       sh """
-        cd ./home/jenkins/workspace/bg-elasticbeanstalk-demo
         terraform destroy -force
       """
       }
